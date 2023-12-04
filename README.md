@@ -178,6 +178,10 @@ XRPL で動くカーボンクレジット用 DEX DCCEX 用のリポジトリで�
   ammAddress: rfCBEVwnwbjWzNaWLPuYgo8osKCtrKRiZB
   ```
 
+- 実際に作成した AMM の LP トークンの currency コード
+
+  `03896C2A1B512284DC7107070447375CC3E70FB5`
+
 ## 参考文献
 
 1. [Xumm](https://xumm.app/)
