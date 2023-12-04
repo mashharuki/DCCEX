@@ -1,0 +1,17 @@
+{
+  "name": "DCCEX",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "frontend": "pnpm -F \"frontend\"",
+    "scripts": "pnpm -F \"scripts\""
+  },
+  "keywords": [],
+  "author": "mashharuki",
+  "license": "MIT",
+  "engines": {
+    "node": "18.x",
+    "pnpm": "8.x"
+  }
+}
