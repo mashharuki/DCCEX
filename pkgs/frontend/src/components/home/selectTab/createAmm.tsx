@@ -1,8 +1,7 @@
 import InputDropBox from "@/components/common/inputBox/InputDropBox";
 import { TokenInfo, XummContext } from "@/context/XummProvider";
 import { useContext, useState } from "react";
-import { MdSwapVert } from "react-icons/md";
-import { xrpToDrops } from "xrpl";
+import { MdAdd } from "react-icons/md";
 import styles from "./SelectTab.module.css";
 
 // testData 
@@ -28,70 +27,57 @@ const testData: TokenInfo[] = [
 ]
 
 /**
- * Swap Component
+ * CreateAmm component
  * @param param0 
  */
-export default function Swap() {
+export default function CreateAmm() {
 
-    const [amountIn, setAmountIn] = useState("");
-    const [amountOut, setAmountOut] = useState("");
+    const [amountOfToken0, setAmountOfToken0] = useState<string>("");
+    const [amountOfToken1, setAmountOfToken1] = useState<string>("");
     const [token0, setToken0] = useState<TokenInfo>(testData[0]);
     const [token1, setToken1] = useState<TokenInfo>(testData[1]);
 
     const xumm = useContext(XummContext);
 
     /**
-     * swap処理を実行するメソッド
+     * AMMペアを新しく作成するメソッド
      */
-    const swap = async() => {
-        // swapを行う
-        if(token0.currency != null && token1.currency != null) {
-            await xumm.swap(token1, token0, amountIn, amountOut)
-        } else if (token0.currency != null) {
-            await xumm.swap(token1, token0, xrpToDrops(amountIn), amountOut)
-        } else {
-            await xumm.swap(token1, token0, amountIn, xrpToDrops(amountOut))
-        }
-    }
-
-    /**
-     * トークンをトレードするメソッド
-     */
-    const tradeToken = async() => {
-        setToken0(token1);
-        setToken1(token0);
+    const createAmm = async() => {
+        await xumm.createAmm(
+            token0,
+            amountOfToken0, 
+            token1,
+            amountOfToken1
+        )
     }
 
     return (
         <div className={styles.tabBody}>
             <InputDropBox
-                leftHeader={"From"}
+                leftHeader={"Amount of token1"}
                 inputs={testData}
-                value={amountOut}
+                value={amountOfToken0}
                 token={token0}
-                onChange={setAmountOut}
+                onChange={setAmountOfToken0}
                 setToken={setToken0}
             />
-            <div 
-                className={styles.swapIcon} 
-                onClick={tradeToken}
-            >
-                <MdSwapVert />
+            <div className={styles.swapIcon}>
+                <MdAdd />
             </div>
             <InputDropBox
-                leftHeader={"To"}
+                leftHeader={"Amount of token2"}
                 inputs={testData}
-                value={amountIn}
+                value={amountOfToken1}
                 token={token1}
-                onChange={setAmountIn}
+                onChange={setAmountOfToken1}
                 setToken={setToken1}
             />
             <div className={styles.bottomDiv}>
                 <div 
                     className={styles.btn} 
-                    onClick={swap}
+                    onClick={createAmm}
                 >
-                    Swap
+                    Create
                 </div>
             </div>
         </div>

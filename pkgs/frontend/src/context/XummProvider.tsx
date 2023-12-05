@@ -161,11 +161,15 @@ export const XummProvider = ({
       await client.connect();
       // Create trust line to issuer ----------------------------------------------
       // get env
-      const { FAUCET_SEED } = await getEnv();
+      const { 
+        FAUCET_SEED,
+        ISSUER_SEED
+      } = await getEnv();
       // Create a wallet using the seed
       const wallet = await Wallet.fromSeed(FAUCET_SEED);
       console.log(`Got faucet wallet address ${wallet.address}.`)
-      const issuer = (await client.fundWallet(wallet)).wallet
+      // Create & get issuer wallet
+      const issuer = Wallet.fromSeed(ISSUER_SEED);
       console.log(`Got issuer address ${issuer.address}.`)
 
       // Enable issuer DefaultRipple ----------------------------------------------
@@ -223,7 +227,8 @@ export const XummProvider = ({
           "value": issue_quantity,
           "issuer": issuer.address
         },
-        "Destination": wallet.address
+        "Destination": wallet.address,
+        "DestinationTag": 1,
       }, {
         autofill: true, 
         wallet: issuer
@@ -236,7 +241,7 @@ export const XummProvider = ({
       if (transactionResult3 == "tesSUCCESS") {
         console.log(`Tokens issued: ${EXPLORER}/transactions/${issue_result.result.hash}`)
       } else {
-        throw `Error sending transaction: ${issue_result}`
+        throw `Tokens issue Error sending transaction: ${JSON.stringify(issue_result)}`
       }
 
       const tokenInfo: TokenInfo = {
@@ -315,7 +320,8 @@ export const XummProvider = ({
           "value": ammInfo.value,
           "issuer": ammInfo.issuer!
         },
-        "Destination": address!
+        "Destination": address!,
+        "DestinationTag": 1,
       }, {
         autofill: true, 
         wallet: wallet
@@ -347,8 +353,9 @@ export const XummProvider = ({
    */
   const createAmm = async(
     token1Info: TokenInfo,
+    token1Amount: string,
     token2Info: TokenInfo,
-    amm_fee_drops: string,
+    token2Amount: string
   ) => {
     try {
       globalContext.setLoading(true);
@@ -358,22 +365,92 @@ export const XummProvider = ({
       const { FAUCET_SEED } = await getEnv();
       // Create a wallet using the seed
       const wallet = await Wallet.fromSeed(FAUCET_SEED);
+      console.log("wallet address:", wallet.address)
 
+      // send tokens before Create AMM 
+      const { 
+        created, 
+        resolve, 
+        resolved, 
+        websocket 
+      } = await xumm!.payload!.createAndSubscribe({
+        "TransactionType": "Payment",
+        "Account": address,
+        "Destination": wallet.address,      
+        "DestinationTag": 1,
+        "Amount": {
+          "currency": token1Info.currency,        
+          "value": token1Amount,                   
+          "issuer": token1Info.issuer!
+        },
+      });
+
+      console.log("Payment Payload URL:", created.next.always);
+      console.log("Payment Payload QR:", created.refs.qr_png);
+      
+      websocket.onmessage = (msg) => {
+        const data = JSON.parse(msg.data.toString());
+        // トランザクションへの署名が完了/拒否されたらresolve
+        if (typeof data.signed === "boolean") {
+          resolve({
+            signed: data.signed,
+            txid: data.txid,
+          });
+        }
+      };
+
+      await resolved;
+
+      // send tokens before Create AMM 
+      const { 
+        created: created2, 
+        resolve: resolve2, 
+        resolved: resolved2, 
+        websocket: websocket2 
+      } = await xumm!.payload!.createAndSubscribe({
+        "TransactionType": "Payment",
+        "Account": address,
+        "Destination": wallet.address,      
+        "DestinationTag": 1,
+        "Amount": {
+          "currency": token2Info.currency,        
+          "value": token2Amount,                   
+          "issuer": token2Info.issuer!
+        },
+      });
+
+      console.log("Payment2 Payload URL:", created2.next.always);
+      console.log("Payment2 Payload QR:", created2.refs.qr_png);
+      
+      websocket2.onmessage = (msg) => {
+        const data = JSON.parse(msg.data.toString());
+        // トランザクションへの署名が完了/拒否されたらresolve
+        if (typeof data.signed === "boolean") {
+          resolve2({
+            signed: data.signed,
+            txid: data.txid,
+          });
+        }
+      };
+
+      await resolved2;
+
+      // AMM 作成コストを取得する
+      const amm_fee_drops = await getAmmcost();
       var ammcreate_result;
-
       if(token2Info.currency != null) {
         ammcreate_result = await client.submitAndWait({
           "TransactionType": "AMMCreate",
           "Account": wallet.address,
           "Amount": {
-            currency: token1Info.currency!,
-            issuer: token1Info.issuer!,
-            value: "15"
+            "currency": token1Info.currency!,
+            "issuer": token1Info.issuer!,
+            "value": token1Amount
           },
           "Amount2": {
             "currency": token2Info.currency,
             "issuer": token2Info.issuer!,
-            "value": "100"
+            "value": token2Amount
           },
           "TradingFee": 500, // 0.5%
           "Fee": amm_fee_drops
@@ -439,6 +516,7 @@ export const XummProvider = ({
             "ledger_index": "validated"
           }
         }
+        /*
         // confirm AMM Info
         const ammInfo: TokenInfo =  await confirmAmm(amm_info_request);
         // send LPToken to user's address
@@ -465,6 +543,7 @@ export const XummProvider = ({
         } else {
           throw `Error sending transaction: ${send_result}`
         }
+        */
       } else {
         throw `Error sending transaction: ${JSON.stringify(ammcreate_result)}`
       }

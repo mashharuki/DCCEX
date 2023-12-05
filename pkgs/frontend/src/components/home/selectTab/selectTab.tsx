@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CreateAmm from './createAmm';
 import Provide from "./provide";
 import Swap from "./swap";
 import Withdraw from "./withdraw";
@@ -50,6 +51,16 @@ export const SelectTab = () => {
         >
           Withdraw
         </div>
+        <div
+          className={
+            "flex items-center justify-center bg-gray-900 rounded-lg w-3/10 p-2 mt-10 cursor-pointer text-white" +
+            " " +
+            (activeTab === "Withdraw" ? "bg-blue-500 hover:bg-blue-700 text-white flex items-center justify-center text-base w-24 h-10 rounded-md" : "")
+          }
+          onClick={() => changeTab("CreateAmm")}
+        >
+          CreateAmm
+        </div>
       </div>
       {activeTab === "Swap" && (
         <Swap />
@@ -59,6 +70,9 @@ export const SelectTab = () => {
       )}
       {activeTab === "Withdraw" && (
         <Withdraw />
+      )}
+      {activeTab === "CreateAmm" && (
+        <CreateAmm />
       )}
     </div>
   );

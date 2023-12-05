@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
  
 export type ResponseData = {
-  WEB3_AUTH_CLIENT_ID: string;
+  ISSUER_SEED: string;
   XRP_API_KEY: string;
   FAUCET_SEED: string;
 }
@@ -11,7 +11,7 @@ export default function handler(
   res: NextApiResponse<ResponseData>
 ) {
   const env: ResponseData = {
-    WEB3_AUTH_CLIENT_ID: process.env.WEB3_AUTH_CLIENT_ID!,
+    ISSUER_SEED: process.env.ISSUER_SEED!,
     XRP_API_KEY: process.env.XRP_API_KEY!,
     FAUCET_SEED: process.env.FAUCET_SEED!
   }
