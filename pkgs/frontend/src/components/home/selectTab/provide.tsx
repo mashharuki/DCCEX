@@ -8,7 +8,7 @@ import styles from "./SelectTab.module.css";
 const testData: TokenInfo[] = [
     {
         id: 0,
-        currency: null,
+        currency: "XRP",
         value: "1000",
         issuer: null
     },

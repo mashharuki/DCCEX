@@ -191,3 +191,53 @@ vote_slots
 :
 Object
 ```
+
+## Supabase 用のクエリ
+
+カーボンクレジットトークンを管理するテーブル
+
+```sql
+CREATE TABLE carbon_credit_tokens (
+  id SERIAL PRIMARY KEY,
+  currency VARCHAR(255) NOT NULL,
+  issuer VARCHAR(255),
+  framework VARCHAR(255) NOT NULL
+);
+```
+
+insert の例文
+
+```sql
+INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('XRP', null, null);
+INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('rer', 'rwRE2wE6YmMBqTVhf739KohrreCn3kNy6x', 'A Framework');
+INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('IUT', 'rBMVwUjt2k7kvJB3Kkadrz6Yh9pygB8MsY', 'B Framework');
+```
+
+カーボンクレジット用の規格を管理するテーブル
+
+```sql
+CREATE TABLE credit_frameworks (
+  id SERIAL PRIMARY KEY,
+  framework VARCHAR(255) NOT NULL
+);
+```
+
+insert の例文
+
+```sql
+INSERT INTO credit_frameworks (framework) VALUES ('A Framework');
+INSERT INTO credit_frameworks (framework) VALUES ('B Framework');
+```
+
+AMM ペアを管理するテーブル
+
+```sql
+CREATE TABLE amm_pairs (
+  id SERIAL PRIMARY KEY,
+  lpTokenCode VARCHAR(255) NOT NULL,
+  token1Currency VARCHAR(255) NOT NULL,
+  token1Issuer VARCHAR(255) ,
+  token2Currency VARCHAR(255) NOT NULL,
+  token2Issuer VARCHAR(255)
+);
+```
