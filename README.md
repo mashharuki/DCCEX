@@ -255,3 +255,4 @@ XRPL で動くカーボンクレジット用 DEX DCCEX 用のリポジトリで�
 69. [Rippling](https://xrpl.org/ja/rippling.html)
 70. [XRP Ledger で独自トークンを作成してみよう](https://zenn.dev/tequ/articles/issue-xrpl-token)
 71. [CrossMark - Docs](https://docs.crossmark.io/docs)
+72. [Typescript で実装する supabase + next.js のクイックスタート](https://zenn.dev/dragonarrow/articles/7ee574bfc92f20)

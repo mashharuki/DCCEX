@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nextui-org/react": "2.0.22",
+    "@supabase/supabase-js": "^2.39.0",
     "@walletconnect/client": "1.8.0",
     "@web3auth/base": "^7.0.4",
     "@web3auth/modal": "^7.0.5",
