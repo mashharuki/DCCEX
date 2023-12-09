@@ -198,10 +198,10 @@ Object
 
 ```sql
 CREATE TABLE carbon_credit_tokens (
-  id SERIAL PRIMARY KEY,
+  id INTEGER DEFAULT 0 PRIMARY KEY,
   currency VARCHAR(255) NOT NULL,
   issuer VARCHAR(255),
-  framework VARCHAR(255) NOT NULL
+  framework VARCHAR(255)
 );
 ```
 
@@ -209,8 +209,32 @@ insert の例文
 
 ```sql
 INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('XRP', null, null);
-INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('rer', 'rwRE2wE6YmMBqTVhf739KohrreCn3kNy6x', 'A Framework');
-INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('IUT', 'rBMVwUjt2k7kvJB3Kkadrz6Yh9pygB8MsY', 'B Framework');
+INSERT INTO carbon_credit_tokens (
+  id,
+  currency,
+  issuer,
+  framework
+)
+  VALUES
+(
+  (SELECT MAX(id) FROM carbon_credit_tokens) + 1,
+  'rer',
+  'rwRE2wE6YmMBqTVhf739KohrreCn3kNy6x',
+  'A Framework'
+);
+INSERT INTO carbon_credit_tokens (
+  id,
+  currency,
+  issuer,
+  framework
+)
+  VALUES
+(
+  (SELECT MAX(id) FROM carbon_credit_tokens) + 1,
+  'IUT',
+  'rBMVwUjt2k7kvJB3Kkadrz6Yh9pygB8MsY',
+  'B Framework'
+);
 ```
 
 updata の例文

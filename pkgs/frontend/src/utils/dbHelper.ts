@@ -93,6 +93,19 @@ export const insertNewCarbonCreditToken = async(
   const supabase = await getSupabaseClient();
 
   try { 
+    // 最大値を取得する
+    const { 
+      data: maxIdData, 
+      error: maxIdError 
+    } = await supabase
+                .from('carbon_credit_tokens')
+                .select('id', { count: 'exact' }) 
+                .order('id', { ascending: false })
+                .limit(1);
+
+    const maxId = maxIdData!.length > 0 ? maxIdData![0].id : 0;
+    console.log("maxId", maxId)
+
     // insert
     const { 
       data, 
@@ -101,6 +114,7 @@ export const insertNewCarbonCreditToken = async(
                 .from('carbon_credit_tokens')
                 .insert([
                   { 
+                    id: maxId + 1,
                     currency: currency,
                     issuer: issuer,
                     framework: framework

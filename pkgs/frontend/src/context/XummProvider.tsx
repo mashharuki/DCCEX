@@ -34,6 +34,12 @@ export type AmmInfo = {
   "ledger_index": "validated"
 }
 
+export type ConfrimAmmInfo = {
+  ammInfo: TokenInfo,
+  token1Amount: string,
+  token2Amount: string
+}
+
 // XRPLインスタンスを作成
 const client = new Client(WS_URL);
 export const XummContext = createContext<any>({});
@@ -128,6 +134,7 @@ export const XummProvider = ({
       // tx data
       const tx: any = {
         TransactionType: 'Payment',
+        DestinationTag: 1,
         Amount: xrpToDrops(5), 
         Destination: destination,
       }
@@ -277,7 +284,7 @@ export const XummProvider = ({
       const metaData4: any = ammcreate_result.result.meta!;
       const transactionResult4 = metaData4.TransactionResult;
 
-      var ammInfo: TokenInfo;
+      var ammInfo: ConfrimAmmInfo;
       var amm_info_request: AmmInfo;
     
       // Use fail_hard so you don't waste the tx cost if you mess up
@@ -299,7 +306,7 @@ export const XummProvider = ({
         ammInfo = await confirmAmm(amm_info_request)
         // insert to DB
         await insertNewCarbonCreditToken(currency_code, issuer.address, framework);
-        await insertNewAmmPair(ammInfo.currency!, amm_info_request);
+        await insertNewAmmPair(ammInfo.ammInfo.currency!, amm_info_request);
       } else {
         throw `Error sending transaction: ${JSON.stringify(ammcreate_result)}`
       }
@@ -485,9 +492,9 @@ export const XummProvider = ({
         }
         
         // confirm AMM Info
-        const ammInfo: TokenInfo =  await confirmAmm(amm_info_request);
+        const ammInfo: ConfrimAmmInfo =  await confirmAmm(amm_info_request);
         // insert to DB
-        await insertNewAmmPair(ammInfo.currency!, amm_info_request);
+        await insertNewAmmPair(ammInfo.ammInfo.currency!, amm_info_request);
 
       } else {
         throw `Error sending transaction: ${JSON.stringify(ammcreate_result)}`
@@ -581,11 +588,20 @@ export const XummProvider = ({
       }
   
       globalContext.setLoading(false);
-      return ammInfo;
+
+      const token1Amount = amount.value;
+      const token2Amount = amount2.value;
+
+      const result = {
+        ammInfo,
+        token1Amount,
+        token2Amount
+      }
+
+      return result;
     } catch(err) {
       console.error("Check token balances err:", err)
       globalContext.setLoading(false);
-      return null;
     }
   }
 
@@ -1424,7 +1440,7 @@ export const XummProvider = ({
       // Swap用のトランザクションデータを作成する
       var swapTxData: any;
 
-      if(token1Info.currency != null && token2Info.currency != null) { 
+      if(token1Info.issuer != null && token2Info.issuer != null) { 
         swapTxData = {
           "TransactionType": "Payment",
           "Account": address,
@@ -1454,7 +1470,7 @@ export const XummProvider = ({
             ]
           ]
         }
-      } else if (token2Info.currency == null) { // XRP > その他のトークン
+      } else if (token2Info.issuer == null) { // XRP > その他のトークン
         swapTxData = {
           "TransactionType": "Payment",
           "Account": address,
@@ -1476,7 +1492,7 @@ export const XummProvider = ({
             ]
           ]
         }
-      } else if (token1Info.currency == null) { // その他のトークン > XRP
+      } else if (token1Info.issuer == null) { // その他のトークン > XRP
         swapTxData = {
           "TransactionType": "Payment",
           "Account": address,

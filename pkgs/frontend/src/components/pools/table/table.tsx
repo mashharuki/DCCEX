@@ -6,14 +6,21 @@ import {
   TableHeader,
   TableRow
 } from "@nextui-org/react";
-import { columns, lpTokens } from "./data";
+import { LpTokenInfo } from "../content";
+import { columns } from "./data";
 import { RenderCell } from "./render-cell";
+
+type Props = {
+  lpTokens: LpTokenInfo[]
+}
 
 /**
  * TableWrapper Component
  * @returns 
  */
-export const TableWrapper = () => {
+export const TableWrapper = ({ lpTokens }: Props) => {
+  console.log("lpTokens:", lpTokens)
+  
   return (
     <div className=" w-full flex flex-col gap-4">
       <Table aria-label="pools table">
@@ -35,10 +42,14 @@ export const TableWrapper = () => {
             <TableRow>
               {(columnKey) => (
                 <TableCell>
-                  {RenderCell({ 
-                    lpToken: item, 
-                    columnKey: columnKey 
-                  })}
+                  { item != undefined && 
+                    <>
+                      {RenderCell({ 
+                        lpTokenInfo: item, 
+                        columnKey: columnKey 
+                      })}
+                    </>
+                  }
                 </TableCell>
               )}
             </TableRow>

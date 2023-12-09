@@ -1,9 +1,19 @@
 import { GlobalContext } from '@/context/GlobalProvider';
 import { XummContext } from '@/context/XummProvider';
-import { useContext } from "react";
+import { getAllAmmPair } from '@/utils/dbHelper';
+import { useContext, useEffect, useState } from "react";
 import { PageHeader } from "../common/pageHeader";
 import Spinner from '../common/spinner';
 import { TableWrapper } from './table/table';
+
+export type LpTokenInfo = {
+  id: number,
+  lpTokenCode: string,
+  token1Currency: string,
+  token1Issuer: string,
+  token2Currency: string,
+  token2Issuer: string,
+}
 
 /**
  * PoolsContent Component
@@ -12,6 +22,20 @@ import { TableWrapper } from './table/table';
 export const PoolsContent = () => {
   const xumm = useContext(XummContext);
   const globalContext = useContext(GlobalContext);
+  const [lpTokens, setLpTokens] = useState<LpTokenInfo[]>();
+
+  /**
+   * 初期化メソッド
+   */
+  const init = async() => {
+    //プール情報を取得する
+    const pools = await getAllAmmPair();
+    setLpTokens(pools!);
+  }
+
+  useEffect(() => {
+    init();
+  }, [])
 
   return (
     <div className=" h-full">
@@ -30,7 +54,7 @@ export const PoolsContent = () => {
                   <div className="h-full flex flex-col gap-2">
                     <div className="w-full bg-default-50 shadow-lg rounded-2xl p-6 text-center">
                       <h2 className='justify-center text-center text-4xl'>Pool Info</h2>
-                      <TableWrapper/>
+                      { lpTokens != undefined && <TableWrapper lpTokens={lpTokens} /> }
                     </div>
                   </div>
                 </>

@@ -1,8 +1,7 @@
 import React from "react";
-import { lpTokens } from "./data";
 
 interface Props {
-  lpToken: (typeof lpTokens)[number];
+  lpTokenInfo: any;
   columnKey: string | React.Key;
 }
 
@@ -12,20 +11,66 @@ interface Props {
  * @returns 
  */
 export const RenderCell = ({ 
-  lpToken, 
+  lpTokenInfo, 
   columnKey 
 }: Props) => {
-  // @ts-ignore
-  const cellValue = lpToken[columnKey];
 
-  // todo get LP Token info by XRPL API
+  // @ts-ignore
+  const cellValue = lpTokenInfo[columnKey];
+
+  console.log("lpTokenInfo:", lpTokenInfo)
+  console.log("columnKey:", columnKey)
+  console.log("cellValue:", lpTokenInfo.lptokencode)
+
+  /**
+   * 文字列を表示用に加工する
+   * @param inputString 
+   * @returns 
+   */
+  const outPutChar = (inputString: string) => {
+    if (inputString.length < 4) {
+      console.error('文字列が短すぎます');
+      return;
+    }
+  
+    const firstFourChars = inputString.slice(0, 4);
+    const lastFourChars = inputString.slice(-4);
+  
+    return firstFourChars + '...' + lastFourChars;
+  }
+  
+  // get LP Token info by XRPL API
+  /*
+  const init = async() => {
+    // amm info request
+    const amm_info_request = {
+      "command": "amm_info",
+      "asset": {
+        "currency": lpTokenInfo.token1Currency,
+        "issuer": lpTokenInfo.token1Issuer,
+      },
+      "asset2": {
+        "currency": lpTokenInfo.token2Currency,
+        "issuer": lpTokenInfo.token2Issuer, 
+      },
+      "ledger_index": "validated"
+    }
+    // get AMMInfo
+    const result: ConfrimAmmInfo = await xumm.confirmAmm(amm_info_request);
+    setAmmInfos(result);
+  }
+
+  useEffect(() => {
+    init();
+  }, [])
+  */
 
   switch (columnKey) {
-    case "lpToken":
+    case "lpTokenCode":
       return (
         <div>
           <div className="text-left">
-            <span>{cellValue}</span>
+            <span>{outPutChar(lpTokenInfo.lptokencode)}</span>
           </div>
         </div>
       );
@@ -33,15 +78,15 @@ export const RenderCell = ({
       return (
         <div>
           <div className="text-left">
-            <span>{cellValue}</span>
+            {"0.0"}
           </div>
         </div>
       );
-    case "token1":
+    case "token1Currency":
       return (
         <div>
           <div className="text-left">
-            <span>{cellValue}</span>
+            <span>{lpTokenInfo.token1currency}</span>
           </div>
         </div>
       );
@@ -49,15 +94,15 @@ export const RenderCell = ({
       return (
         <div>
           <div className="text-left">
-            <span>{cellValue}</span>
+            {"0.0"}
           </div>
         </div>
       );
-    case "token2":
+    case "token2Currency":
       return (
         <div>
           <div className="text-left">
-            <span>{cellValue}</span>
+            <span>{lpTokenInfo.token2currency}</span> 
           </div>
         </div>
       );
@@ -65,11 +110,11 @@ export const RenderCell = ({
       return (
         <div>
           <div className="text-left">
-            <span>{cellValue}</span>
+            {"0.0"}
           </div>
         </div>
       );
     default:
-      return cellValue;
+      return "";
   }
 };
