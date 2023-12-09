@@ -1,15 +1,21 @@
+import { TokenInfo } from "@/context/XummProvider";
 import { useState } from "react";
 import CreateAmm from './createAmm';
 import Provide from "./provide";
 import Swap from "./swap";
 import Withdraw from "./withdraw";
 
+type Props = {
+  tokens: TokenInfo[]
+}
+
+
 /**
  * SelectTab Component
  */
-export const SelectTab = () => {
+export const SelectTab = ({ tokens }: Props) => {
   const [activeTab, setActiveTab] = useState("Swap");
-
+  
   /**
    * changeTab メソッド
    * @param tab 
@@ -55,7 +61,7 @@ export const SelectTab = () => {
           className={
             "flex items-center justify-center bg-gray-900 rounded-lg w-3/10 p-2 mt-10 cursor-pointer text-white" +
             " " +
-            (activeTab === "Withdraw" ? "bg-blue-500 hover:bg-blue-700 text-white flex items-center justify-center text-base w-24 h-10 rounded-md" : "")
+            (activeTab === "CreateAmm" ? "bg-blue-500 hover:bg-blue-700 text-white flex items-center justify-center text-base w-24 h-10 rounded-md" : "")
           }
           onClick={() => changeTab("CreateAmm")}
         >
@@ -63,16 +69,16 @@ export const SelectTab = () => {
         </div>
       </div>
       {activeTab === "Swap" && (
-        <Swap />
+        <>{ tokens != undefined && <Swap tokens={tokens!} /> }</>
       )}
       {activeTab === "Provide" && (
-        <Provide/>
+        <>{ tokens != undefined && <Provide tokens={tokens!} /> }</>
       )}
       {activeTab === "Withdraw" && (
-        <Withdraw />
+        <>{ tokens != undefined && <Withdraw tokens={tokens!} /> }</>
       )}
       {activeTab === "CreateAmm" && (
-        <CreateAmm />
+        <>{ tokens != undefined && <CreateAmm tokens={tokens!} /> }</>
       )}
     </div>
   );

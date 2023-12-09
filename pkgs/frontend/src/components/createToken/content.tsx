@@ -1,8 +1,10 @@
 import { GlobalContext } from '@/context/GlobalProvider';
 import { XummContext } from '@/context/XummProvider';
-import { useContext } from "react";
+import { getAllFramework } from '@/utils/dbHelper';
+import { useContext, useEffect, useState } from "react";
 import { PageHeader } from "../common/pageHeader";
 import Spinner from '../common/spinner';
+import type { FrameworkInfo } from './createForm/createForm';
 import { CreateForm } from './createForm/createForm';
 
 
@@ -13,6 +15,20 @@ import { CreateForm } from './createForm/createForm';
 export const CreateTokenContent = () => {
   const xumm = useContext(XummContext);
   const globalContext = useContext(GlobalContext);
+
+  const [frameworks, setFrameworks] = useState<FrameworkInfo[]>();
+
+  /**
+   * 初期化メソッド
+   */
+  const init = async() => {
+    const data = await getAllFramework();
+    setFrameworks(data!);
+  }
+
+  useEffect(() => {
+    init();
+  }, [])
 
   return (
     <div className=" h-full">
@@ -30,7 +46,7 @@ export const CreateTokenContent = () => {
                   <PageHeader/>
                   <div className="h-full flex flex-col gap-2">
                     <div className="w-full bg-default-50 shadow-lg rounded-2xl p-6 text-center">
-                      <CreateForm />
+                      <>{ frameworks != undefined && <CreateForm frameworks={frameworks!} /> }</>
                     </div>
                   </div>
                 </>

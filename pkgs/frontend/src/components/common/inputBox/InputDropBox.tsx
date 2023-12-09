@@ -12,7 +12,7 @@ type Props = {
   value: string;
   token: TokenInfo;
   onChange: React.Dispatch<React.SetStateAction<string>>;
-  setToken: React.Dispatch<React.SetStateAction<TokenInfo>>;
+  setToken: React.Dispatch<React.SetStateAction<TokenInfo | undefined>>;
 };
 
 /**
@@ -52,7 +52,7 @@ export default function InputDropBox({
               <div className="items-center m-2 gap-2 bg-gray-700">
                 <div className="flex-col m-2 gap-4 bg-gray-700">
                   <h3 className="text-xl font-medium m-0 text-white whitespace-nowrap ">
-                    {token.currency}
+                    {token!.currency}
                   </h3>
                 </div>
               </div>
@@ -73,7 +73,7 @@ export default function InputDropBox({
                   key={item.id}
                   className="py-4 text-base font-semibold text-white"
                 >
-                  {item.currency}
+                  {item!.currency}
                 </DropdownItem>
               )}
             </DropdownMenu>

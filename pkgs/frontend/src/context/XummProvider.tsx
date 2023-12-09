@@ -1,5 +1,6 @@
 import { GlobalContext } from '@/context/GlobalProvider';
 import { EXPLORER, WS_URL } from "@/utils/consts";
+import { insertNewAmmPair, insertNewCarbonCreditToken } from '@/utils/dbHelper';
 import { getEnv } from "@/utils/getEnv";
 import React, { createContext, useContext, useState } from 'react';
 import {
@@ -153,7 +154,8 @@ export const XummProvider = ({
    */
   const issueNewToken = async (
     currency_code: string, 
-    issue_quantity: string
+    issue_quantity: string,
+    framework: string
   ) => {
     try {
       globalContext.setLoading(true)
@@ -274,11 +276,14 @@ export const XummProvider = ({
       // get metaData & TransactionResult
       const metaData4: any = ammcreate_result.result.meta!;
       const transactionResult4 = metaData4.TransactionResult;
+
+      var ammInfo: TokenInfo;
+      var amm_info_request: AmmInfo;
     
       // Use fail_hard so you don't waste the tx cost if you mess up
       if (transactionResult4 == "tesSUCCESS") {
         console.log(`AMM created: ${EXPLORER}/transactions/${ammcreate_result.result.hash}`)
-        const amm_info_request: AmmInfo = {
+        amm_info_request = {
           "command": "amm_info",
           "asset": {
             "currency": tokenInfo.currency!,
@@ -291,50 +296,12 @@ export const XummProvider = ({
           "ledger_index": "validated"
         }
         // confirm AMM Info
-        await confirmAmm(amm_info_request)
+        ammInfo = await confirmAmm(amm_info_request)
+        // insert to DB
+        await insertNewCarbonCreditToken(currency_code, issuer.address, framework);
+        await insertNewAmmPair(ammInfo.currency!, amm_info_request);
       } else {
         throw `Error sending transaction: ${JSON.stringify(ammcreate_result)}`
-      }
-
-      const amm_info_request: AmmInfo = {
-        "command": "amm_info",
-        "asset": {
-          "currency": tokenInfo.currency!,
-          "issuer": tokenInfo.issuer!,
-        },
-        "asset2": {
-          "currency": "XRP",
-          "issuer": null
-        },
-        "ledger_index": "validated"
-      };
-
-      // confirm AMM Info
-      const ammInfo: TokenInfo =  await confirmAmm(amm_info_request);
-      // send LPToken to user's address
-      const send_result = await client.submitAndWait({
-        "TransactionType": "Payment",
-        "Account": wallet.address,
-        "Amount": {
-          "currency": ammInfo.currency!,
-          "value": ammInfo.value,
-          "issuer": ammInfo.issuer!
-        },
-        "Destination": address!,
-        "DestinationTag": 1,
-      }, {
-        autofill: true, 
-        wallet: wallet
-      })
-
-       // get metaData & TransactionResult
-       const metaData5: any = send_result.result.meta!;
-       const transactionResult5 = metaData5.TransactionResult;
-
-      if (transactionResult5 == "tesSUCCESS") {
-        console.log(`Tokens sent: ${EXPLORER}/transactions/${send_result.result.hash}`)
-      } else {
-        throw `Error sending transaction: ${send_result}`
       }
 
       globalContext.setLoading(false);
@@ -516,34 +483,12 @@ export const XummProvider = ({
             "ledger_index": "validated"
           }
         }
-        /*
+        
         // confirm AMM Info
         const ammInfo: TokenInfo =  await confirmAmm(amm_info_request);
-        // send LPToken to user's address
-        const send_result = await client.submitAndWait({
-          "TransactionType": "Payment",
-          "Account": wallet.address,
-          "Amount": {
-            "currency": ammInfo.currency!,
-            "value": ammInfo.value,
-            "issuer": ammInfo.issuer!
-          },
-          "Destination": address!
-        }, {
-          autofill: true, 
-          wallet: wallet
-        })
-  
-         // get metaData & TransactionResult
-         const metaData2: any = send_result.result.meta!;
-         const transactionResult2 = metaData2.TransactionResult;
-  
-        if (transactionResult2 == "tesSUCCESS") {
-          console.log(`Tokens sent: ${EXPLORER}/transactions/${send_result.result.hash}`)
-        } else {
-          throw `Error sending transaction: ${send_result}`
-        }
-        */
+        // insert to DB
+        await insertNewAmmPair(ammInfo.currency!, amm_info_request);
+
       } else {
         throw `Error sending transaction: ${JSON.stringify(ammcreate_result)}`
       }

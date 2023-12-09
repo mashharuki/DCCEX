@@ -4,32 +4,21 @@ import { useContext, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import styles from "./SelectTab.module.css";
 
-// testData 
-const testData: TokenInfo[] = [
-    {
-        id: 0,
-        currency: "XRP",
-        value: "1000",
-        issuer: null
-    },
-    {
-        id: 1,
-        currency: "rer",
-        value: "1000",
-        issuer: "rwRE2wE6YmMBqTVhf739KohrreCn3kNy6x"
-    }
-]
+type Props = {
+    tokens: TokenInfo[]
+}
+  
 
 /**
  * Provide component
  * @param param0 
  */
-export default function Provide() {
+export default function Provide({ tokens }: Props) {
 
     const [amountOfToken0, setAmountOfToken0] = useState<string>("");
     const [amountOfToken1, setAmountOfToken1] = useState<string>("");
-    const [token0, setToken0] = useState<TokenInfo>(testData[0]);
-    const [token1, setToken1] = useState<TokenInfo>(testData[1]);
+    const [token0, setToken0] = useState<TokenInfo | undefined>(tokens[0]);
+    const [token1, setToken1] = useState<TokenInfo | undefined>(tokens[1]);
     const [activePool, setActivePool] = useState(true);
 
     const xumm = useContext(XummContext);
@@ -50,9 +39,9 @@ export default function Provide() {
         <div className={styles.tabBody}>
             <InputDropBox
                 leftHeader={"Amount of token1"}
-                inputs={testData}
+                inputs={tokens}
                 value={amountOfToken0}
-                token={token0}
+                token={token0!}
                 onChange={setAmountOfToken0}
                 setToken={setToken0}
             />
@@ -61,9 +50,9 @@ export default function Provide() {
             </div>
             <InputDropBox
                 leftHeader={"Amount of token2"}
-                inputs={testData}
+                inputs={tokens}
                 value={amountOfToken1}
-                token={token1}
+                token={token1!}
                 onChange={setAmountOfToken1}
                 setToken={setToken1}
             />

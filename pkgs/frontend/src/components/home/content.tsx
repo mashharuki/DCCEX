@@ -1,6 +1,7 @@
 import { GlobalContext } from '@/context/GlobalProvider';
-import { XummContext } from '@/context/XummProvider';
-import { useContext } from "react";
+import { TokenInfo, XummContext } from '@/context/XummProvider';
+import { getAllCarbonCreditTokens } from "@/utils/dbHelper";
+import { useContext, useEffect, useState } from "react";
 import { PageHeader } from "../common/pageHeader";
 import Spinner from '../common/spinner';
 import { SelectTab } from './selectTab/selectTab';
@@ -12,6 +13,16 @@ import { SelectTab } from './selectTab/selectTab';
 export const Content = () => {
   const xumm = useContext(XummContext);
   const globalContext = useContext(GlobalContext);
+  const [tokens, setTokens] = useState<TokenInfo[]>();
+
+  const init = async() => {
+    const data = await getAllCarbonCreditTokens();
+    setTokens(data!);
+  }
+
+  useEffect(()=> {
+    init()
+  }, [])
 
   return (
     <div className=" h-full">
@@ -28,7 +39,7 @@ export const Content = () => {
                   <PageHeader/>
                   <div className="h-full flex flex-col gap-2">
                     <div className="w-full bg-default-50 shadow-lg rounded-2xl p-6 text-center">
-                      <SelectTab />
+                      { tokens != null && <SelectTab tokens={tokens} /> }
                     </div>
                   </div>
                 </>

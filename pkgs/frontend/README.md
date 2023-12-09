@@ -213,6 +213,12 @@ INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('rer', 'r
 INSERT INTO carbon_credit_tokens (currency, issuer, framework) VALUES ('IUT', 'rBMVwUjt2k7kvJB3Kkadrz6Yh9pygB8MsY', 'B Framework');
 ```
 
+updata の例文
+
+```sql
+UPDATE carbon_credit_tokens SET id = id - 1;
+```
+
 カーボンクレジット用の規格を管理するテーブル
 
 ```sql
