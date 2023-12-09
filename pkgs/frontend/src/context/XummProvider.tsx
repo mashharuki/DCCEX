@@ -969,63 +969,27 @@ export const XummProvider = ({
       console.log("results:", result);
       console.log("lpTokenInfo:", lpTokenInfo);
 
-      /*
-      // send LP Token to wallet address
-      const { 
-        created, 
-        resolve, 
-        resolved, 
-        websocket 
-      } = await xumm!.payload!.createAndSubscribe({
-        "TransactionType": "Payment",
-        "Account": address,
-        "Destination": wallet.address,      
-        "DestinationTag": 1,
-        "Amount": {
-          "currency": lpTokenInfo.currency,        
-          "value": lpTokenInfo.value,                   
-          "issuer": lpTokenInfo.issuer!
-        },
-      });
-
-      console.log("LpToken Payment Payload URL:", created.next.always);
-      console.log("LpToken Payment Payload QR:", created.refs.qr_png);
-      
-      websocket.onmessage = (msg) => {
-        const data = JSON.parse(msg.data.toString());
-        // トランザクションへの署名が完了/拒否されたらresolve
-        if (typeof data.signed === "boolean") {
-          resolve({
-            signed: data.signed,
-            txid: data.txid,
-          });
-        }
-      };
-
-      await resolved;
-      */
-
-      if(token1Info.currency != null && token2Info.currency != null) { 
+      if(token1Info.issuer != null && token2Info.issuer != null) { 
         // withdraw AMM
         ammwithdraw_result = await client.submitAndWait({
           "TransactionType": "AMMWithdraw",
           "Account": wallet.address!,
           "Amount": {
-            "currency": token1Info.currency,
+            "currency": token1Info.currency!,
             "issuer": token1Info.issuer!,
             "value": token1Amount
           },
           "Amount2": {
-            "currency": token2Info.currency,
+            "currency": token2Info.currency!,
             "issuer": token2Info.issuer!,
             "value": token2Amount
           },
           "Asset": {
-            "currency": token1Info.currency,
+            "currency": token1Info.currency!,
             "issuer": token1Info.issuer!,
           },
           "Asset2": {
-            "currency": token2Info.currency,
+            "currency": token2Info.currency!,
             "issuer": token2Info.issuer!,
           },
           "Fee" : "10",
@@ -1053,7 +1017,7 @@ export const XummProvider = ({
           "Destination": address!,      
           "DestinationTag": 1,
           "Amount": {
-            "currency": token1Info.currency,        
+            "currency": token1Info.currency!,        
             "value": token1Amount,     
             "issuer": token1Info.issuer!
           },
@@ -1080,7 +1044,7 @@ export const XummProvider = ({
           "Destination": address!,      
           "DestinationTag": 1,
           "Amount": {
-            "currency": token2Info.currency,        
+            "currency": token2Info.currency!,        
             "value": token2Amount,     
             "issuer": token2Info.issuer!
           },
@@ -1099,7 +1063,7 @@ export const XummProvider = ({
         } else {
           throw `Error sending transaction: ${JSON.stringify(payment_result)}`
         }
-      } else if(token2Info.currency == null) {
+      } else if(token2Info.issuer == null) {
         // withdraw AMM
         ammwithdraw_result = await client.submitAndWait({
           "TransactionType": "AMMWithdraw",
@@ -1184,7 +1148,7 @@ export const XummProvider = ({
         } else {
           throw `Error sending transaction: ${JSON.stringify(xrp_payment_result)}`
         }
-      } else if(token1Info.currency == null) {
+      } else if(token1Info.issuer == null) {
         // withdraw AMM
         ammwithdraw_result = await client.submitAndWait({
           "TransactionType": "AMMWithdraw",

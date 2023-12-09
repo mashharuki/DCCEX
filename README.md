@@ -4,11 +4,11 @@ XRPL で動くカーボンクレジット用 DEX DCCEX 用のリポジトリで�
 
 ##　 AMM 関連のトランザクション
 
-[Crate AMM]()
+[Crate AMM](https://devnet.xrpl.org/transactions/05BA7ABFC3BDC4EFD8FD7A0139C920A1B5470996A878AD2F30887B1273951190)
 
-[Deposit AMM]()
+[Deposit AMM](https://devnet.xrpl.org/transactions/5C4911E60FBC538D1AD2F40F3692D3C5D0385A22841A2AA69D2A1DA2725D9FD5)
 
-[Withdraw AMM]()
+[Withdraw AMM](https://devnet.xrpl.org/transactions/E6762CABCAE63CB412844B09F7CC834F1B4D8A5E450CCC97EF1C31AAF3797274)
 
 [Swap]()
 
