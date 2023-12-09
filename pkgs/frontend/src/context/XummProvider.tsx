@@ -1259,7 +1259,7 @@ export const XummProvider = ({
       await client.connect();
       globalContext.setLoading(true);
     
-      if(token1Info.currency != null && token2Info.currency != null) { 
+      if(token1Info.currency != null && token2Info.issuer != null) { 
         result = await client.request({
           command: 'path_find',
           subcommand: 'create',
@@ -1276,7 +1276,7 @@ export const XummProvider = ({
             "issuer": token1Info.issuer
           }
         });
-      } else if(token2Info.currency == null) {
+      } else if(token2Info.issuer == null) {
         result = await client.request({
           command: 'path_find',
           subcommand: 'create',
@@ -1291,7 +1291,22 @@ export const XummProvider = ({
             "issuer": token1Info.issuer
           }
         });
-      } 
+      } else if(token1Info.issuer == null) {
+        result = await client.request({
+          command: 'path_find',
+          subcommand: 'create',
+          source_account: address,
+          source_amount: {
+            "currency": "XRP",
+          },
+          destination_account: address,
+          destination_amount: {
+            "currency": token2Info.currency,  
+            "value": token2Value,                   
+            "issuer": token2Info.issuer
+          }
+        });
+      }
     
       console.log("path find:", result)
 
@@ -1445,7 +1460,7 @@ export const XummProvider = ({
             "value": token1Value,                   // ここで変換先トークンの金額を指定する。
             "issuer": token1Info.issuer
           },
-          "SendMax": token2Value,
+          "SendMax": xrpToDrops(token2Value),
           "Paths": [
             [
               {
@@ -1462,7 +1477,7 @@ export const XummProvider = ({
           "Account": address,
           "Destination": address,      // AMMの際は自分自身のアドレスを指定
           "DestinationTag": 1,
-          "Amount": token1Value,
+          "Amount": xrpToDrops(token1Value),
           "SendMax": {
             "currency": token2Info.currency,        // ここで変換先トークンの種類を指定する。
             "value": token2Value,                   // ここで変換先トークンの金額を指定する。
