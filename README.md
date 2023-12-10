@@ -2,7 +2,7 @@
 
 XRPL で動くカーボンクレジット用 DEX DCCEX 用のリポジトリです。
 
-##　 AMM 関連のトランザクション
+## AMM 関連のトランザクション
 
 [Crate AMM](https://devnet.xrpl.org/transactions/05BA7ABFC3BDC4EFD8FD7A0139C920A1B5470996A878AD2F30887B1273951190)
 
@@ -21,6 +21,7 @@ XRPL で動くカーボンクレジット用 DEX DCCEX 用のリポジトリで�
 - xrpl
 - XUMM
 - Tailwind CSS
+- Supabase
 
 ## アプリの実行方法
 
