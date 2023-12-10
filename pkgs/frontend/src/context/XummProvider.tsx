@@ -119,6 +119,20 @@ export const XummProvider = ({
   };
 
   /**
+   * clientへの接続
+   */
+  const clientConnect = async() => {
+    await client.connect();
+  }
+
+  /**
+   * clientへの接続解除
+   */
+  const clientDisConnect = async() => {
+    await client.disconnect();
+  }
+
+  /**
    * faucet用のXRP 送信トランザクション
    */
   const sendFaucet = async(destination: string) => {
@@ -492,7 +506,7 @@ export const XummProvider = ({
         }
         
         // confirm AMM Info
-        const ammInfo: ConfrimAmmInfo =  await confirmAmm(amm_info_request);
+        const ammInfo: ConfrimAmmInfo = await confirmAmm(amm_info_request);
         // insert to DB
         await insertNewAmmPair(ammInfo.ammInfo.currency!, amm_info_request);
 
@@ -576,22 +590,25 @@ export const XummProvider = ({
         "issuer": lp_token.issuer,
         "value": lp_token.value
       }
+
+      var token2Amount;
   
       console.log(`The AMM account ${lp_token.issuer} has ${lp_token.value} total
                   LP tokens outstanding, and uses the currency code ${lp_token.currency}.`)
       if(amount2.currency != undefined) {
         console.log(`In its pool, the AMM holds ${amount.value} ${amount.currency}.${amount.issuer}
                      and ${amount2.value} ${amount2.currency}.${amount2.issuer}`)
+        token2Amount = amount2.value;
       } else {
         console.log(`In its pool, the AMM holds ${amount.value} ${amount.currency}.${amount.issuer}
                      and ${amount2} XRP`)
+        token2Amount = amount2
       }
   
       globalContext.setLoading(false);
 
       const token1Amount = amount.value;
-      const token2Amount = amount2.value;
-
+      
       const result = {
         ammInfo,
         token1Amount,
@@ -1542,6 +1559,8 @@ export const XummProvider = ({
     balance,
     xumm,
     login,
+    clientConnect,
+    clientDisConnect,
     sendFaucet,
     issueNewToken,
     createAmm,

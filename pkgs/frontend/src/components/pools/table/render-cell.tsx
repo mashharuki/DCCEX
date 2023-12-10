@@ -1,4 +1,6 @@
+import Router from 'next/router';
 import React from "react";
+import styles from "./../../createToken/createForm/CreateForm.module.css";
 
 interface Props {
   lpTokenInfo: any;
@@ -14,14 +16,7 @@ export const RenderCell = ({
   lpTokenInfo, 
   columnKey 
 }: Props) => {
-
-  // @ts-ignore
-  const cellValue = lpTokenInfo[columnKey];
-
-  console.log("lpTokenInfo:", lpTokenInfo)
-  console.log("columnKey:", columnKey)
-  console.log("cellValue:", lpTokenInfo.lptokencode)
-
+  
   /**
    * 文字列を表示用に加工する
    * @param inputString 
@@ -38,32 +33,21 @@ export const RenderCell = ({
   
     return firstFourChars + '...' + lastFourChars;
   }
-  
-  // get LP Token info by XRPL API
-  /*
-  const init = async() => {
-    // amm info request
-    const amm_info_request = {
-      "command": "amm_info",
-      "asset": {
-        "currency": lpTokenInfo.token1Currency,
-        "issuer": lpTokenInfo.token1Issuer,
-      },
-      "asset2": {
-        "currency": lpTokenInfo.token2Currency,
-        "issuer": lpTokenInfo.token2Issuer, 
-      },
-      "ledger_index": "validated"
-    }
-    // get AMMInfo
-    const result: ConfrimAmmInfo = await xumm.confirmAmm(amm_info_request);
-    setAmmInfos(result);
-  }
 
-  useEffect(() => {
-    init();
-  }, [])
-  */
+  /**
+   * 詳細画面への遷移
+   */
+  const linkToDetail = () => {
+    Router.push({
+      pathname: '/poolDetail',
+      query: {
+        token1Currency: lpTokenInfo.token1currency,
+        token1Issuer: lpTokenInfo.token1issuer,
+        token2Currency: lpTokenInfo.token2currency,
+        token2Issuer: lpTokenInfo.token2issuer,
+      }
+    })
+  }
 
   switch (columnKey) {
     case "lpTokenCode":
@@ -71,14 +55,6 @@ export const RenderCell = ({
         <div>
           <div className="text-left">
             <span>{outPutChar(lpTokenInfo.lptokencode)}</span>
-          </div>
-        </div>
-      );
-    case "lpTokenBalance":
-      return (
-        <div>
-          <div className="text-left">
-            {"0.0"}
           </div>
         </div>
       );
@@ -90,14 +66,6 @@ export const RenderCell = ({
           </div>
         </div>
       );
-    case "token1Balance":
-      return (
-        <div>
-          <div className="text-left">
-            {"0.0"}
-          </div>
-        </div>
-      );
     case "token2Currency":
       return (
         <div>
@@ -106,11 +74,18 @@ export const RenderCell = ({
           </div>
         </div>
       );
-    case "token2Balance":
+    case "detail":
       return (
         <div>
           <div className="text-left">
-            {"0.0"}
+            <div className={styles.detailBottomDiv}>
+              <div 
+                className={styles.btn} 
+                onClick={linkToDetail}
+              >
+                Detail
+              </div>
+            </div>
           </div>
         </div>
       );

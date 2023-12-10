@@ -17,6 +17,14 @@
     align-items: center;
     border-radius: 19px;
 }
+
+.detailBottomDiv {
+    margin: 10px auto;
+    padding: 5px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 19px;
+}
   
 .btn {
     background-color: #356c93;
