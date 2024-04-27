@@ -564,6 +564,14 @@ export const swap = async(
       "TransactionType": "Payment",
       "Account": wallet.address,
       "Destination": wallet.address,      // AMMの際は自分自身のアドレスを指定
+      "Memos": [
+        {
+          "Memo": {
+            "MemoType": "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+            "MemoData": "mashharuki"
+          }
+        }
+      ],
       "Amount": {
         "currency": token1Info.currency,        // ここで変換先トークンの種類を指定する。
         "value": token1Value,                   // ここで変換先トークンの金額を指定する。
